@@ -1,12 +1,14 @@
 {
   "name": "handbook",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "license": "UNLICENSED",
   "type": "module",
   "description": "How Harry builds, ships and runs his projects. Starlight, the same as AUGUR's docs site (ADR 0082).",
   "packageManager": "pnpm@10.28.0",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
