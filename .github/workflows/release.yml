@@ -1,0 +1,27 @@
+# Release Please (how-to/set-up-releases). On every push to main it keeps one release pull request
+# up to date from the Conventional Commit titles merged since the last release. Merging that pull
+# request tags handbook@X.Y.Z and makes the GitHub release. The handbook has nothing to build or
+# sign, so the release is the tag and its notes.
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

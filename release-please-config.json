@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "cb092b2d05aff634de69cecb2964b0b3add8853a",
+  "include-component-in-tag": true,
+  "include-v-in-tag": false,
+  "tag-separator": "@",
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "component": "handbook",
+      "package-name": "handbook",
+      "changelog-path": "CHANGELOG.md"
+    }
+  }
+}
