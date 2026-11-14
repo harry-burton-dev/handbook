@@ -1,11 +1,11 @@
 # Handbook
 
-How Harry builds, ships and runs his projects, for every project. A Starlight site (ADR 0082 in AUGUR; here, decision 0001).
+How Harry builds, ships and runs his projects, for every project. A Starlight site, like AUGUR's docs (ADR 0082).
 
 ## Where things go
 
-- Pages are in `src/content/docs/`, one folder per kind: `how-to/`, `reference/`, `explanation/`, `decisions/`. `how-to/write-a-page.md` says which kind a page is.
-- Cross-project decisions are numbered pages in `decisions/`. A project's own decisions stay with that project.
+- Pages are in `src/content/docs/`, one folder per kind: `how-to/`, `reference/`, `explanation/`. `how-to/write-a-page.md` says which kind a page is.
+- Decisions are not written here. Working agreements (WA-nnn) live in Drive's "Ways of working", written by the Records thread and accepted by Harry (WA-001). A page links to the WA behind it. A product's own decisions (ADRs) stay with that product.
 - The shared docs check is `.github/workflows/docs-check.yml`; other repositories call it. `reference/docs-check.md` must match it.
 
 ## Writing

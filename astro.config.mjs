@@ -18,13 +18,13 @@ export default defineConfig({
       social: [{ icon: 'github', label: 'Source', href: 'https://github.com/harry-burton-dev/handbook' }],
       editLink: { baseUrl: 'https://github.com/harry-burton-dev/handbook/edit/main/' },
       lastUpdated: true,
-      // Diátaxis: one section per kind of page (Explanation explains the split).
+      // Diátaxis: one section per kind of page (Explanation explains the split). Decisions aren't here:
+      // they're working agreements (WA records) in Drive's Ways of working, and pages link to them.
       sidebar: [
         { label: 'Start here', items: [{ autogenerate: { directory: 'start-here' } }] },
         { label: 'How-to', items: [{ autogenerate: { directory: 'how-to' } }] },
         { label: 'Reference', items: [{ autogenerate: { directory: 'reference' } }] },
         { label: 'Explanation', items: [{ autogenerate: { directory: 'explanation' } }] },
-        { label: 'Decisions', collapsed: true, items: [{ autogenerate: { directory: 'decisions' } }] },
       ],
     }),
   ],
