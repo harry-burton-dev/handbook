@@ -7,4 +7,9 @@ sidebar:
 
 Reference pages hold facts to look up, kept short and current.
 
+- [Repositories](repositories/)
+- [linear-link](linear-link/)
+- [Feature flags](feature-flags/)
+- [Control centre](control-centre/)
+- [Working agreements](working-agreements/)
 - [Docs check](docs-check/)

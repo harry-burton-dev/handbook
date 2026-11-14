@@ -1,18 +1,23 @@
 ---
 title: How the handbook is organised
-description: Why pages are split into how-to, reference, explanation and decisions, and why it's docs-as-code.
+description: Why pages are split into how-to, reference and explanation, where decisions live, and why it's docs-as-code.
 ---
 
-## Four kinds of page
+## Three kinds of page
 
 The handbook follows [Diátaxis](https://diataxis.fr/): a page does one job for its reader.
 
 - A **how-to** guide is for someone doing a job now. It gives steps and leaves out the why.
 - A **reference** page is for someone looking a fact up. It's complete and dry.
 - An **explanation** page is for someone who wants to understand. It gives reasons and trade-offs.
-- A **decision** page records one choice that spans projects: what was chosen, what wasn't, and why.
 
 Mixing them makes each worse. A how-to guide full of reasons is slow to follow, and a reference page with steps is hard to scan.
+
+## Where decisions live
+
+The handbook says how the process works. It doesn't decide it. Decisions about how Harry works are working agreements (WA records) in the Drive folder "Ways of working". Only the Records thread writes them, and only Harry accepts them (WA-001). A page names the WA behind it, so a reader can find the reason and who agreed it. [Working agreements](../../reference/working-agreements/) lists them.
+
+Why the split: Harry reads and accepts agreements in Drive, and a team at work would too. The steps and facts that agents follow every day are better as code, where CI checks them and a pull request changes them.
 
 ## Docs-as-code
 

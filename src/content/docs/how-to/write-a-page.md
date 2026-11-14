@@ -14,7 +14,8 @@ Decide what the reader is doing, then put the page in that section:
 | do one job | How-to | `src/content/docs/how-to/` |
 | look a fact up | Reference | `src/content/docs/reference/` |
 | understand why | Explanation | `src/content/docs/explanation/` |
-| know what was decided | Decisions | `src/content/docs/decisions/` |
+
+A decision isn't a page here. It's a working agreement, written by the Records thread in Drive. Link to it from the page it affects.
 
 ## Write it
 
