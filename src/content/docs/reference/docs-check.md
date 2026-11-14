@@ -23,6 +23,8 @@ Tools are pinned by version and checksum, and actions by commit.
 | `working-directory` | `.` | Where the site's `package.json` is. |
 | `links` | `**/*.md` | What lychee checks: a site's built HTML (`dist`) or the Markdown. |
 
+The runner is `ubuntu-latest` unless the calling repository sets the variable `CI_RUNNER`, as JSON (for example `"self-hosted"`), the same as AUGUR.
+
 ## Vale rules
 
 The Handbook style is in `.vale/styles/Handbook/`.

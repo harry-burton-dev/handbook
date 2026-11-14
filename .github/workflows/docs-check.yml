@@ -42,7 +42,8 @@ env:
 
 jobs:
   docs:
-    runs-on: ubuntu-latest
+    # Same as AUGUR: a repository variable CI_RUNNER (JSON, such as '"self-hosted"') picks the runner.
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-latest"') }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
