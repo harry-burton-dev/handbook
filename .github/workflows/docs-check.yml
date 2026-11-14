@@ -1,0 +1,100 @@
+# The docs check every repository calls (how-to/add-the-docs-check). One job, about a minute:
+# markdownlint, Vale, an optional site build, then lychee on every link.
+#
+# A repository calls it from its own workflow, which runs only when Markdown changes:
+#   jobs:
+#     docs:
+#       uses: harry-burton-dev/handbook/.github/workflows/docs-check.yml@main
+#
+# It checks the caller's files with the caller's .vale.ini and .markdownlint-cli2.jsonc, which come
+# with the docs kit. Tools are pinned by version and checksum, actions by commit.
+name: Docs check
+
+on:
+  workflow_call:
+    inputs:
+      vale-blocking:
+        description: Fail on Vale errors. Off while a repository's pages are brought into line (warnings show either way).
+        type: boolean
+        default: false
+      build:
+        description: Command that builds the docs site, such as `pnpm build`. Empty for a repository with no site.
+        type: string
+        default: ''
+      working-directory:
+        description: Where the site's package.json is, for the build.
+        type: string
+        default: '.'
+      links:
+        description: What lychee checks. A site checks its built HTML (dist); a repository without one, its Markdown.
+        type: string
+        default: "**/*.md"
+
+permissions:
+  contents: read
+
+env:
+  VALE_VERSION: 3.27.0
+  VALE_SHA256: c80d62f6bce87b81843ac5b512a26e63213927b957adba0a64fc594570da2000
+  LYCHEE_VERSION: 0.24.2
+  LYCHEE_SHA256: 1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a
+  MARKDOWNLINT_VERSION: 0.24.1
+
+jobs:
+  docs:
+    # Same as AUGUR: a repository variable CI_RUNNER (JSON, such as '"self-hosted"') picks the runner.
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-latest"') }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Install Vale and lychee
+        run: |
+          mkdir -p "$RUNNER_TEMP/bin" && cd "$RUNNER_TEMP"
+          curl -sSLfo vale.tgz "https://github.com/errata-ai/vale/releases/download/v${VALE_VERSION}/vale_${VALE_VERSION}_Linux_64-bit.tar.gz"
+          echo "${VALE_SHA256}  vale.tgz" | sha256sum -c -
+          tar -xzf vale.tgz -C bin vale
+          curl -sSLfo lychee.tgz "https://github.com/lycheeverse/lychee/releases/download/lychee-v${LYCHEE_VERSION}/lychee-x86_64-unknown-linux-gnu.tar.gz"
+          echo "${LYCHEE_SHA256}  lychee.tgz" | sha256sum -c -
+          tar -xzf lychee.tgz && mv lychee-x86_64-unknown-linux-gnu/lychee bin/
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
+      - name: Markdown is consistent (markdownlint)
+        run: npx --yes "markdownlint-cli2@${MARKDOWNLINT_VERSION}"
+
+      - name: Writing is plain and names are right (Vale)
+        run: |
+          git ls-files -z '*.md' '*.mdx' ':!:.vale/**' | xargs -0 -r vale $NO_EXIT
+        env:
+          NO_EXIT: ${{ !inputs.vale-blocking && '--no-exit' || '' }}
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+        if: inputs.build != ''
+        with:
+          package_json_file: ${{ inputs.working-directory }}/package.json
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        if: inputs.build != ''
+        with:
+          node-version-file: ${{ inputs.working-directory }}/.nvmrc
+          cache: pnpm
+          cache-dependency-path: ${{ inputs.working-directory }}/pnpm-lock.yaml
+      - name: The site builds
+        if: inputs.build != ''
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          pnpm install --frozen-lockfile
+          $BUILD
+        env:
+          BUILD: ${{ inputs.build }}
+
+      - name: Every link works (lychee)
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          config=()
+          [ -f lychee.toml ] && config=(--config lychee.toml)
+          root=()
+          [ -d "$LINKS" ] && root=(--root-dir "$PWD/$LINKS")
+          lychee --no-progress "${config[@]}" "${root[@]}" "$LINKS"
+        env:
+          LINKS: ${{ inputs.links }}
+          GITHUB_TOKEN: ${{ github.token }}

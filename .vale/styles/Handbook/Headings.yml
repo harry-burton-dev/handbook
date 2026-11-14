@@ -1,0 +1,23 @@
+# Headings in sentence case, like the page titles.
+extends: capitalization
+message: "Write '%s' in sentence case."
+level: warning
+scope: heading
+match: $sentence
+indicators:
+  - ':'
+exceptions:
+  - AUGUR
+  - ADR
+  - ADRs
+  - CI
+  - DevLake
+  - DORA
+  - GitHub
+  - Grafana
+  - Linear
+  - MSI
+  - OpenFeature
+  - Starlight
+  - Vale
+  - Claude

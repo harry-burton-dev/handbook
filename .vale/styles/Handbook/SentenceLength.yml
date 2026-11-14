@@ -1,0 +1,7 @@
+# Short sentences. Split one over 30 words.
+extends: occurrence
+message: "Split this sentence: it's over 30 words."
+level: warning
+scope: sentence
+max: 30
+token: \b(\w+)\b

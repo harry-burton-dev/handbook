@@ -1,0 +1,13 @@
+// markdownlint keeps the Markdown consistent. Line length is off: prose is one line per paragraph.
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD024": { "siblings_only": true },
+    "MD025": { "front_matter_title": "^\\s*title\\s*[:=]" },
+    "MD033": false,
+    "MD041": false
+  },
+  "globs": ["**/*.{md,mdx}"],
+  "ignores": ["node_modules/**", "dist/**", ".vale/styles/**"]
+}

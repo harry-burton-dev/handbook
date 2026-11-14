@@ -1,0 +1,15 @@
+# lychee checks every link. Links to private places (Harry's servers on the tailnet, Linear, Drive)
+# can't be reached from CI, so they're left out rather than failing every run.
+exclude = [
+  '^https?://100\.\d+\.\d+\.\d+',
+  '^https?://localhost',
+  '^https://linear\.app/',
+  '^https://drive\.google\.com/',
+  '^https://claude\.ai/',
+  # The handbook repo is private, so its links answer 404 to anyone signed out.
+  '^https://github\.com/harry-burton-dev/handbook',
+]
+include_fragments = "anchor-only"
+max_retries = 2
+timeout = 20
+accept = ["200..=299", "429"]

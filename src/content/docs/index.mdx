@@ -1,0 +1,23 @@
+---
+title: Handbook
+description: How Harry builds, ships and runs his projects.
+template: splash
+hero:
+  tagline: How Harry builds, ships and runs his projects. One process for every project, written down where the code is.
+  actions:
+    - text: Start here
+      link: start-here/
+      icon: right-arrow
+    - text: Add the docs check to a repository
+      link: how-to/add-the-docs-check/
+      variant: minimal
+---
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <LinkCard title="How-to" description="Steps for one job: start an epic, ship a change, add a flag." href="how-to/" />
+  <LinkCard title="Reference" description="The facts to look up: names, repositories, checks, ports." href="reference/" />
+  <LinkCard title="Explanation" description="Why the process works the way it does." href="explanation/" />
+  <LinkCard title="Decisions" description="What was decided across projects, and why." href="decisions/" />
+</CardGrid>

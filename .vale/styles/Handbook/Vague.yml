@@ -1,0 +1,10 @@
+# Say what's meant, not that there's more.
+extends: existence
+message: "Name the things instead of '%s'."
+level: warning
+ignorecase: true
+tokens:
+  - etc\.?
+  - and so on
+  - and more
+  - various
