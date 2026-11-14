@@ -3,7 +3,7 @@ title: Repositories
 description: Harry's repositories, what each is, and how it releases.
 ---
 
-All on GitHub under `harry-burton-dev`. The AUGUR repositories are public. The handbook is private.
+All on GitHub under `harry-burton-dev`. The AUGUR repositories and the handbook are public, so their Actions minutes are free.
 
 ## AUGUR
 
@@ -25,7 +25,7 @@ AUGUR is trunk-based: `main` is the only long-lived branch. Releases are built a
 
 | Repository | What it is | Notes |
 | --- | --- | --- |
-| `handbook` | This handbook | private; Starlight |
+| `handbook` | This handbook | Starlight |
 | `gen-ui` | A canvas web app (`apps/web`) | can reach a server |
 | `muster` | Power Platform solution | locked-down tenant: no API access or custom code |
 | `rn-design` | HTML pages | opened from `file://` on locked-down machines |
