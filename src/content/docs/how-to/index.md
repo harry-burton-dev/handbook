@@ -12,6 +12,7 @@ Each guide gives the steps for one job, in order, and ends when the job is done.
 - [Start an epic or an issue](start-an-epic-or-issue/)
 - [Ship a change](ship-a-change/)
 - [Add a feature flag](add-a-feature-flag/)
+- [Set up releases in a repository](set-up-releases/)
 - [Write a page](write-a-page/)
 - [Add the docs check to a repository](add-the-docs-check/)
 

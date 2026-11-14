@@ -23,9 +23,11 @@ AUGUR is trunk-based: `main` is the only long-lived branch. Releases are built a
 
 ## Other projects
 
+Outside AUGUR, repositories release with Release Please ([Set up releases](../../how-to/set-up-releases/)).
+
 | Repository | What it is | Notes |
 | --- | --- | --- |
-| `handbook` | This handbook | Starlight |
+| `handbook` | This handbook | Starlight; releases as `handbook@X.Y.Z` |
 | `gen-ui` | A canvas web app (`apps/web`) | can reach a server |
 | `muster` | Power Platform solution | locked-down tenant: no API access or custom code |
 | `rn-design` | HTML pages | opened from `file://` on locked-down machines |
