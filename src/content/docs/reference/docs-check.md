@@ -42,4 +42,4 @@ Words Vale should accept are in `.vale/styles/config/vocabularies/Handbook/accep
 
 ## Links left out
 
-`lychee.toml` leaves out links that CI can't reach: Harry's servers on the tailnet, Linear, Google Drive, Claude and the private handbook repository.
+`lychee.toml` leaves out links that CI can't reach: Harry's servers on the tailnet, Linear, Google Drive, Claude, and GitHub's edit pages, which need a sign-in.

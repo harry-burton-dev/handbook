@@ -6,8 +6,8 @@ exclude = [
   '^https://linear\.app/',
   '^https://drive\.google\.com/',
   '^https://claude\.ai/',
-  # The handbook repo is private, so its links answer 404 to anyone signed out.
-  '^https://github\.com/harry-burton-dev/handbook',
+  # GitHub's edit pages need a sign-in.
+  '^https://github\.com/harry-burton-dev/handbook/edit/',
 ]
 include_fragments = "anchor-only"
 max_retries = 2
