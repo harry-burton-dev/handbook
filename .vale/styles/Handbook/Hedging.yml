@@ -1,0 +1,13 @@
+# Words that make a page sound unsure or a step sound trivial.
+extends: existence
+message: "Drop '%s'."
+level: suggestion
+ignorecase: true
+tokens:
+  - simply
+  - just
+  - basically
+  - obviously
+  - of course
+  - easy
+  - easily

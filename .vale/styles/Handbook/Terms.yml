@@ -1,0 +1,15 @@
+# Names are written one way everywhere.
+extends: substitution
+message: "Write '%s', not '%s'."
+level: error
+ignorecase: false
+swap:
+  Augur: AUGUR
+  Devlake: DevLake
+  Github: GitHub
+  Open Feature: OpenFeature
+  Openfeature: OpenFeature
+  FlagD: flagd
+  Flagd: flagd
+  Starlite: Starlight
+  Linear Link: linear-link

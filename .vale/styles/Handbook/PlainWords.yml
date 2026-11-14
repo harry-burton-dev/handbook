@@ -1,0 +1,17 @@
+# Plain English: the short word a reader already knows.
+extends: substitution
+message: "Use '%s' instead of '%s'."
+level: warning
+ignorecase: true
+swap:
+  utilise|utilize: use
+  leverage: use
+  in order to: to
+  facilitate: help
+  prior to: before
+  going forward: from now on
+  e\.g\.: for example
+  i\.e\.: that is
+  via: through
+  commence: start
+  terminate: end

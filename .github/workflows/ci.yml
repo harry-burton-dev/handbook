@@ -1,0 +1,18 @@
+# The handbook's own check: the shared docs check, with the site built and Vale blocking.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    uses: ./.github/workflows/docs-check.yml
+    with:
+      vale-blocking: true
+      build: pnpm build
+      links: dist
