@@ -13,8 +13,8 @@ A pipeline is the automated path from a pull request to a running change. Every 
 2. **Review gate.** The review tier in `.github/review-tiers.json` says what else must pass before merge. See [Ship a change](../../how-to/ship-a-change/).
 3. **Build.** Build the thing that ships once: a site, a container image or a package.
 4. **Release.** Turn merged titles into a version and a tag. Release Please keeps one release pull request open. Merging it makes the release.
-5. **Deploy.** Run the built artifact on the server. [Coolify](https://coolify.io/) builds the Dockerfile on each push and replaces the running container.
-6. **Verify.** Check that the service answers after the deploy. If it doesn't, deploy the last good version again.
+5. **Deploy.** Run the built artifact on the server. A product with its own updater, such as AUGUR, pulls its signed release and backs up first. A simple site goes through [Coolify](https://coolify.io/), which builds the Dockerfile on each push. See [How deploys work](../../explanation/how-deploys-work/).
+6. **Verify.** Check that the service answers after the deploy. If it doesn't, deploy the last good version again. AUGUR's updater does this by itself.
 
 ## The workflows in the handbook
 
@@ -43,6 +43,6 @@ The Dockerfile in the handbook builds the site in one stage and serves it with [
 
 1. Add the docs check or CI workflow. See [Add the docs check](../../how-to/add-the-docs-check/).
 2. Add the PR title check and choose a release style. See [Set up releases](../../how-to/set-up-releases/).
-3. If the repository runs as a service, add a Dockerfile, then connect the repository to Coolify. Coolify builds it on each push.
+3. If the repository runs as a simple service, add a Dockerfile, then connect the repository to Coolify. Coolify builds it on each push. A product with its own updater deploys its own way instead, as [Deploy AUGUR to the workbench](../../how-to/deploy-augur-to-the-workbench/) shows.
 4. If the repository ships code, add `REVIEW.md` and `.github/review-tiers.json`.
 5. After the first deploy, check that the service answers. Then write the check into `AGENTS.md`.

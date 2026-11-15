@@ -27,11 +27,16 @@ Each tool has one job here. The links go to each tool's own site. A tool that ru
 | Changesets | Versions and changelogs for a pnpm monorepo | [Changesets](https://github.com/changesets/changesets) |
 | Coolify | Builds Dockerfiles and runs the containers on Harry's server | [Coolify](https://coolify.io/) |
 | nginx | Serves static sites from a container | [nginx](https://nginx.org/) |
+| cosign | Signs releases in CI, and checks the signature before a server runs one | [cosign](https://docs.sigstore.dev/cosign/) |
+| augurctl | Installs and checks AUGUR servers from their files in augur-fleet | [Run deployments from files](https://github.com/harry-burton-dev/augur/blob/main/docs/src/content/docs/run/from-files.md) |
 
 ## Run and observe
 
 | Tool | What it does here | Read more |
 | --- | --- | --- |
+| Ubuntu Server LTS | The system on Harry's server. See [Set up a server](../../how-to/set-up-a-server/). | [Ubuntu Server](https://ubuntu.com/server) |
+| Docker and Compose | Run every stack on the server, one Compose project each | [Docker](https://docs.docker.com/engine/) |
+| restic | Copies AUGUR's backups off the server, encrypted | [restic](https://restic.net/) |
 | Tailscale | Gives a private network (the tailnet) to reach the server without opening ports | [Tailscale](https://tailscale.com/) |
 | Homarr | Harry's home page for his services | [Homarr](https://homarr.dev/) |
 | Apache DevLake | Collects delivery data from GitHub and shows the DORA metrics. See the [control centre](../control-centre/). | [Apache DevLake](https://devlake.apache.org/) |
@@ -39,6 +44,7 @@ Each tool has one job here. The links go to each tool's own site. A tool that ru
 | Prometheus | Collects metrics from services | [Prometheus](https://prometheus.io/) |
 | Langfuse | Records and evaluates calls to language models | [Langfuse](https://langfuse.com/) |
 | Infisical | Keeps secrets out of code | [Infisical](https://infisical.com/) |
+| sops and age | Encrypt each server's secrets in the fleet repository, so only Harry and that server can read them | [sops](https://getsops.io/), [age](https://age-encryption.org/) |
 
 ## Plan and build with agents
 

@@ -24,3 +24,6 @@ exceptions:
   - Claude
   - Harry
   - Remote Control
+  - AUGUR
+  - Tailscale
+  - Docker
