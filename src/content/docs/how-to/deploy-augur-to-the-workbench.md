@@ -1,107 +1,62 @@
 ---
 title: Deploy AUGUR to the workbench
-description: Put AUGUR on Harry's server as the workbench, from its file in augur-fleet, so it follows main by itself.
+description: Run AUGUR's main on Harry's server as the dev environment, deployed from endstate-gitops by a GitHub Actions job.
 sidebar:
   order: 7
 ---
 
-The workbench is the AUGUR server things are built on. It runs ring `dev`, so it takes a dev build of every merge into AUGUR's `main` by itself. It backs up first, and rolls back if the build doesn't come up. [How deploys work](../../explanation/how-deploys-work/) explains the model.
+The workbench is AUGUR's `dev` environment. It runs `main`, a few minutes after each merge. What it runs is a commit in `endstate-gitops`, so a deploy is a commit and a rollback is `git revert`. [How deploys work](../../explanation/how-deploys-work/) says why AUGUR uses Compose and not the cluster.
 
-AUGUR's own docs hold the detail. This page is the order to do it in, and who does each step. Steps marked **Harry** need him.
+Steps marked **Harry** need him.
 
-## Before you start
+## How it fits together
 
-- The server is set up: [Set up a server](../set-up-a-server/).
-- The release you install has a signed deploy bundle, `augur-deploy-<version>.tar.gz`. Releases up to 0.26.x have none. Dev builds have none either, so the first install is from a release.
-- A checkout of [augur-fleet](https://github.com/harry-burton-dev/augur-fleet), Harry's fleet repository, and of [augur](https://github.com/harry-burton-dev/augur).
+1. AUGUR's dev build workflow builds and signs the images for a merge into `main`, then tells `endstate-gitops` with a `repository_dispatch`.
+2. A job in `endstate-gitops` writes the new digests to `envs/dev/augur/images.env`, with the AUGUR commit they came from, and commits that to `main`.
+3. That commit starts the **Deploy** workflow, in the `dev` environment. It joins the tailnet as `tag:ci` and runs the deploy command on the server as the `deploy` user.
+4. The deploy command fetches `infra/deploy` at that AUGUR commit, checks each image's cosign signature, runs AUGUR's backup, then `docker compose up --wait`.
+5. If any part isn't healthy in time, it starts the last good digests again, and the job fails. GitHub keeps each deploy, good or bad, in the environment's history.
 
 ## 1. Get the keys ready (Harry)
 
-1. **Tailscale auth key.** In the admin console, under Settings, then Keys, make a reusable key tagged `tag:augur`. A tagged key never expires.
-2. **Read key.** Make a classic GitHub token with only `read:packages`. The server pulls images and reads the signed release feed with it.
-3. **Backup bucket.** Make an S3-compatible bucket off the server, such as Backblaze B2 or Cloudflare R2, and a key that can reach only that bucket.
-4. **age keys.** On his own machine, `age-keygen -o ~/.config/sops/age/keys.txt`. Keep the file in his password manager, and give the thread the public key, the line starting `age1`.
+1. **Tailscale.** In the admin console, make an OAuth client with the `auth_keys` scope and the tag `tag:ci`. In the access rules, let `tag:ci` reach `tag:server` on port 22 only. Save its id and secret as the `TS_OAUTH_CLIENT_ID` and `TS_OAUTH_SECRET` secrets of the `dev` environment in `endstate-gitops`.
+2. **Dispatch token.** Make a fine-grained GitHub token with Contents write on `endstate-gitops` only. Save it as the `GITOPS_DISPATCH_TOKEN` secret in augur.
+3. **Read key.** Make a classic GitHub token with only `read:packages`, for the server to pull images.
+4. **Backup bucket.** Make an S3-compatible bucket off the server, such as Backblaze B2 or Cloudflare R2, and a key that reaches only that bucket.
+5. **age key.** On his own machine, `age-keygen -o ~/.config/sops/age/keys.txt`. Keep the file in his password manager, and give the thread the public line, starting `age1`.
 
 Each of these gives access, so a thread never makes one.
 
-## 2. Install the tools on the server
+## 2. Write the environment
 
-As the admin user, from `/opt/stacks`:
+In `endstate-gitops`, on a branch, a thread adds:
 
-```sh
-git clone https://github.com/harry-burton-dev/augur.git augur-src
-cd augur-src && pnpm install --filter .   # augurctl's own packages, no package token needed
-```
+- `envs/dev/augur/settings.env`: the settings that aren't secret, with `SERVER_RING=dev` and `SEED_ALLOWED=true`. Leave `COMPOSE_PROFILES` without `updater`, so Git is the only thing that changes what runs.
+- `envs/dev/augur/secrets.sops.env`: every secret, encrypted for Harry's age key and the server's. `augurctl init` in AUGUR's repository makes the ones AUGUR can make up. Harry adds `TS_AUTHKEY`, `PLATFORM_ADMIN_PASSWORD` and the `OFFSITE_*` bucket settings with `sops`.
+- `envs/dev/augur/images.env`: the first dev build's digests.
+- `.github/workflows/deploy-augur.yml`: the Deploy workflow, with actions pinned by commit and `permissions: contents: read`.
+- `bin/deploy-augur`: the deploy command. It's installed on the server as the `deploy` user's forced command.
 
-Install [sops](https://github.com/getsops/sops/releases) and [age](https://github.com/FiloSottile/age/releases) from their releases. Make the server's own age key with `age-keygen -o ~/.config/sops/age/keys.txt` and `chmod 600` it.
+The thread opens a pull request, and merges it on green.
 
-## 3. Write the workbench's file
+## 3. First deploy
 
-In augur-fleet, on a branch:
+Merging that pull request runs the Deploy workflow. Then check:
 
-1. In `.sops.yaml`, encrypt `secrets/workbench.sops.env` for two keys: Harry's and the server's. The server can then read only its own secrets.
-2. In `deployments/workbench.yaml`, set the new server: `host.ssh: local`, `host.dir: /opt/stacks/augur`, the release to install, and these settings beyond the URL and machine name:
+1. The workflow's run is green, and the `dev` environment shows the deploy.
+2. On the server, `docker compose ps` in `/opt/stacks/augur` shows every container `healthy`.
+3. From a device on the tailnet, open the workbench's address and sign in as the admin. Choose a new password.
+4. **Deployment, then Health** shows every part working. **Deployment, then Backups** shows a backup and an off-server copy.
 
-   ```yaml
-   ring: dev
-   release: <the first release with a deploy bundle>
-   settings:
-     COMPOSE_PROFILES: updater        # the server upgrades itself
-     SEED_ALLOWED: "true"             # sample people only: no real ones on the workbench
-     GITHUB_READ_USER: harry-burton-dev
-   ```
+Then fill it with sample people: [AUGUR's seed guide](https://github.com/harry-burton-dev/augur/blob/main/docs/seed.md).
 
-3. Run `node <augur>/scripts/augurctl/augurctl.mjs check --dir deployments`, and open a pull request.
+## When a deploy goes wrong
 
-Keep `COMPOSE_PROJECT_NAME` unset, so the project is `platform`, the name AUGUR expects.
-
-## 4. Make the secrets
-
-```sh
-node <augur>/scripts/augurctl/augurctl.mjs init workbench --dir deployments
-sops secrets/workbench.sops.env
-```
-
-`init` makes every secret AUGUR can make up. In `sops`, add the ones only Harry has: `TS_AUTHKEY`, `PLATFORM_ADMIN_PASSWORD` and the `OFFSITE_*` bucket settings. Commit only the encrypted file.
-
-Then put the read key where the server reads it. The preflight stops if `GITHUB_READ_USER` is set and the file isn't there:
-
-```sh
-mkdir -p /opt/stacks/augur/infra/deploy/secrets
-printf '%s' '<the read key>' > /opt/stacks/augur/infra/deploy/secrets/github-read-key
-sudo chown 1000 /opt/stacks/augur/infra/deploy/secrets/github-read-key
-sudo chmod 600 /opt/stacks/augur/infra/deploy/secrets/github-read-key
-```
-
-## 5. Install it
-
-```sh
-node <augur>/scripts/augurctl/augurctl.mjs up workbench --dir deployments
-```
-
-`up` fetches the release's bundle, checks its cosign signature, checks its sums on the server, writes `.env` and runs the preflight. It starts AUGUR only when the preflight ends `✓ Ready`. If the preflight stops it, fix what it says and run `up` again.
-
-## 6. Check it
-
-1. `node <augur>/scripts/augurctl/augurctl.mjs plan workbench --dir deployments` exits 0: the server matches its file.
-2. From a device on the tailnet, open the workbench's address and sign in as the admin. Choose a new password.
-3. **Deployment, then Health** shows every part working.
-4. **Deployment, then Backups** shows a backup, a restore test and an off-server copy, within a few minutes.
-
-## 7. Let it follow main
-
-1. In augur-fleet, set `release: follow` in `deployments/workbench.yaml`, and merge the pull request. From now on the server's updater picks the release, not the file.
-2. Fill it with sample people: [AUGUR's seed guide](https://github.com/harry-burton-dev/augur/blob/main/docs/seed.md).
-3. Install the apps the file lists, and set each one's **Releases from** to Dev builds in Deployment, so their `main` reaches the workbench too.
-
-## When a dev build goes wrong
-
-- It didn't come up: the updater went back by itself, and that build is never taken again by itself. Fix it on `main`, and the next dev build comes.
-- It came up but is wrong: **Go back** in Deployment, then fix on `main`.
-- The server is lost: [Restore a lost server](https://github.com/harry-burton-dev/augur/blob/main/docs/src/content/docs/run/restore-a-lost-server.md), from the off-server copy and the sops file.
+- **It didn't come up.** The deploy command put the last good digests back, and the run is red. Fix it on `main`, and the next dev build deploys.
+- **It came up wrong.** `git revert` the digest commit in `endstate-gitops`. That deploys the version before. A data migration is never undone this way: restore the backup the deploy took instead.
+- **The server is lost.** [Set up a server](../set-up-a-server/), re-run the last Deploy, and restore the data from the bucket ([Restore a lost server](https://github.com/harry-burton-dev/augur/blob/main/docs/src/content/docs/run/restore-a-lost-server.md)).
 
 ## Read more
 
 - [Install AUGUR](https://github.com/harry-burton-dev/augur/blob/main/docs/src/content/docs/run/install.md): every setting and check.
-- [Run deployments from files](https://github.com/harry-burton-dev/augur/blob/main/docs/src/content/docs/run/from-files.md): augurctl's commands.
-- [Release channels](https://github.com/harry-burton-dev/augur/blob/main/docs/release-channels.md): rings, dev builds, going back and halting.
+- [Release channels](https://github.com/harry-burton-dev/augur/blob/main/docs/release-channels.md): rings, dev builds and signatures.

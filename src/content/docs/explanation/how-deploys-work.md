@@ -1,61 +1,62 @@
 ---
 title: How deploys work
-description: How a change gets onto Harry's servers, why the server pulls signed builds instead of being pushed to, and how a bad deploy is undone.
+description: The GitOps model every server follows, the tools that run it, and how a bad deploy is undone.
 sidebar:
   order: 3
 ---
 
-A deploy puts a built, signed release on a server and proves it runs. The same model holds for every project. Only the tool that does each step changes.
+Harry's servers are run with GitOps, the way most platform teams run theirs. Git holds what each environment should run. An agent makes the server match Git. Every deploy and every rollback is a commit.
 
 ## The model
 
-1. **Build once, in CI.** A merge into `main` builds the release on a GitHub runner. Nothing is built on a server.
-2. **Sign what was built.** CI signs the images and files with [cosign](https://docs.sigstore.dev/cosign/), keyless, as the workflow and branch that made them. There's no signing key to lose.
-3. **The server pulls.** The server checks for new releases and fetches them itself. CI never logs in to a server, so a leaked CI secret can't change what runs there.
-4. **The server checks the signature** before it runs anything. A build from another workflow, another branch or a fork is refused.
-5. **Back up, then roll forward.** The server takes a backup, starts the new release and waits for every part to say it's healthy.
-6. **Roll back by itself.** If the new release doesn't come up, the server goes back to the release before, with the backup it took.
-7. **Desired state lives in Git.** What each server should run, and its settings, sit in a file in a fleet repository. Its secrets sit beside it, encrypted with [sops](https://getsops.io/) and [age](https://age-encryption.org/). A tool compares the server with its file and says what differs.
+1. **CI builds once.** A merge into `main` builds the container images on a GitHub runner and pushes them to GitHub's container registry (GHCR).
+2. **CI signs what it built** with [cosign](https://docs.sigstore.dev/cosign/), keyless. The server checks the signature before it runs an image.
+3. **A commit says what runs.** The image's digest is written into the environment's folder in the GitOps repository, `endstate-gitops`. A tag such as `latest` is never deployed.
+4. **An agent applies it.** It sees the new commit and makes the server match.
+5. **It checks the deploy.** The deploy waits for every part to be healthy. If they aren't, it puts the last good commit back.
+6. **Secrets sit beside it, encrypted** with [sops](https://getsops.io/) and [age](https://age-encryption.org/). Only Harry and the server hold a key that can read them.
 
-This is GitOps: Git says what should run, the server pulls toward it, and every change has a record.
+Undoing a deploy is `git revert`. The history of an environment is `git log` on its folder.
 
-## Rings
+## The tools
 
-A server says what kind it is, so one release can move through them in turn.
-
-| Ring | What it is | What it takes |
+| Job | Tool | Why this one |
 | --- | --- | --- |
-| `dev` | The workbench: the server things are built on | A dev build of every merge into `main`, by itself |
-| `preview` | A staging server | Each beta release, so it bakes before it's stable |
-| `production` | A server real people use | Stable releases only |
+| Run containers | [k3s](https://k3s.io/) | Certified Kubernetes in one binary, built for a single server |
+| Make the server match Git | [Argo CD](https://argo-cd.readthedocs.io/) | The most used GitOps agent. It pulls, so CI never logs in to the cluster. It has a page that shows what runs and what drifted. |
+| Follow `main` | [Argo CD Image Updater](https://argocd-image-updater.readthedocs.io/) | Writes each new image digest back to Git, so the dev environment follows `main` by itself |
+| A preview per pull request | Argo CD's [pull request generator](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Pull-Request/) | Makes a namespace for each open pull request, and deletes it when the pull request closes |
+| Package a service | [Helm](https://helm.sh/) charts, upstream where one exists | One versioned file per service. Renovate opens a pull request for each new version. |
+| Reach it | [Tailscale's Kubernetes operator](https://tailscale.com/kb/1236/kubernetes-operator) | Gives each service an HTTPS address on the tailnet, with no ports open |
+| Back up the cluster | [Velero](https://velero.io/), to a bucket off the server | Restores a namespace, or the whole cluster on a new machine |
 
-The workbench runs on Harry's own server. It runs `main`, so it shows the product as it is today, not as it was at the last release.
+## AUGUR is the exception
 
-## Which tool deploys what
+AUGUR runs on Docker Compose (AUGUR's ADR 0010). Its app runner starts apps' containers through Docker, so it can't run on Kubernetes until that's rebuilt. Until then it gets the same model with the standard tools for Compose:
 
-| What runs | How it deploys | Why |
+- Its digests live in `endstate-gitops` under `envs/dev/augur/`, as for any service.
+- A GitHub Actions job in the `dev` [environment](https://docs.github.com/actions/deployment/targeting-different-environments/using-environments-for-deployment) deploys each commit. It joins the tailnet with [Tailscale's GitHub Action](https://github.com/tailscale/github-action) and runs one fixed command on the server over SSH. GitHub keeps the deploy history.
+- That command checks the signatures, runs AUGUR's backup, then `docker compose up --wait`. If the stack isn't healthy, it puts the last good digests back.
+- AUGUR's own updater is off on the workbench, so Git is the only thing that changes what runs.
+
+Moving AUGUR onto Kubernetes is a product decision for AUGUR's records, not this handbook.
+
+## Environments
+
+| Environment | What it runs | How it moves |
 | --- | --- | --- |
-| A product with its own updater, such as AUGUR | Its own signed deploy bundle and updater, with its file in the fleet repository | The updater already checks signatures, backs up and rolls back. Another tool on top would fight it. |
-| A simple service or site, such as this handbook | [Coolify](https://coolify.io/) builds its Dockerfile on each push to `main` | It has no data to migrate, so redeploying the last good commit undoes it |
-| Harry's own tools, such as DevLake | A Compose stack per tool in its own folder | Each one is a stock image, pinned by version, that Renovate keeps up to date |
+| `dev` (the workbench) | `main`, a few minutes after each merge | By itself |
+| A pull request's preview | That pull request's images | Made when it opens, deleted when it closes |
+| `staging` and `production` | Released versions only | A pull request to the GitOps repository, merged after its checks |
 
-AUGUR doesn't run on Kubernetes (AUGUR's ADR 0010), so tools that need it, such as Argo CD and Flux, don't fit. Tools that pull `latest` without checking a signature, such as Watchtower, aren't used.
-
-## Previews
-
-- **A pull request to a product** is tested on a throwaway server in CI before it merges. For AUGUR that's the deploy test.
-- **An app's pull request** can be built and run on the workbench, beside the app's real release.
-- **There's no server per branch.** One AUGUR needs 16 GB of memory, so a second copy on the same machine would starve the first.
+AUGUR gets no preview per pull request on the server, because one copy needs 16 GB of memory. Its pull requests run the deploy test in CI instead.
 
 ## Undoing a deploy
 
-In order, from the cheapest:
-
-1. **Nothing to do.** The server rolled back by itself.
-2. **Go back** on the server's own page. It takes a backup first.
-3. **Halt the release**, so no other server takes it. Then fix forward with a new release.
-4. **Restore the backup** from the off-server copy, when the server itself is lost.
+1. **It didn't come up.** The deploy put the last good version back by itself. Fix it on `main`.
+2. **It came up wrong.** `git revert` the commit in `endstate-gitops`, or roll back in Argo CD's page, then fix it on `main`.
+3. **The server is lost.** Install a new one, apply `endstate-gitops`, and restore the data from the bucket.
 
 ## What needs Harry
 
-A thread can do everything above that runs through GitHub or the fleet repository. Harry does the steps on the machine itself, and anything that gives access: auth keys, tokens, buckets and age keys. [Set up a server](../../how-to/set-up-a-server/) bundles those steps into one list.
+A thread does everything that runs through GitHub and the GitOps repository. Harry does the steps on the machine, and anything that gives access: keys, tokens and buckets. [Set up a server](../../how-to/set-up-a-server/) lists them in one place.

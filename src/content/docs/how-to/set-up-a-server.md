@@ -1,17 +1,18 @@
 ---
 title: Set up a server
-description: Take an empty machine to a locked-down Docker host that Harry's stacks can run on, and say which steps are Harry's.
+description: Take an empty machine to a locked-down server that runs k3s, Argo CD and AUGUR's Compose stack, and say which steps are Harry's.
 sidebar:
   order: 6
 ---
 
-Do this once per machine, before any stack goes on it. Steps marked **Harry** need his hands on the machine or give access. A thread does the rest through a Remote Control session on the server.
+Do this once per machine. Steps marked **Harry** need his hands on the machine or give access. A thread does the rest through a Remote Control session on the server. [How deploys work](../../explanation/how-deploys-work/) explains why it's built this way.
 
 ## What you need
 
-- A machine with at least 32 GB of memory if AUGUR runs on it beside other stacks. AUGUR alone needs 16 GB.
+- A machine with at least 32 GB of memory. AUGUR alone needs 16 GB.
 - [Ubuntu Server 24.04 LTS](https://ubuntu.com/download/server) on a USB stick.
 - Harry's SSH public key.
+- The private GitOps repository, `endstate-gitops`.
 
 ## 1. Install the system (Harry)
 
@@ -22,16 +23,14 @@ Do this once per machine, before any stack goes on it. Steps marked **Harry** ne
 ## 2. Join the tailnet (Harry)
 
 1. In the [Tailscale admin console](https://login.tailscale.com/admin/machines), remove the old server's machines, so their names are free again.
-2. On the server, install Tailscale and sign in:
+2. On the server, install Tailscale and sign in, tagged `tag:server`:
 
    ```sh
    curl -fsSL https://tailscale.com/install.sh | sh
-   sudo tailscale up --ssh
+   sudo tailscale up --ssh --advertise-tags=tag:server
    ```
 
-3. In the admin console, turn off key expiry for the new machine.
-
-The tailnet is how Harry reaches his own machines. A product must never need it, so it isn't part of any product's design.
+The tailnet is how Harry reaches his own machines. A product must never need it.
 
 ## 3. Start a Remote Control session (Harry)
 
@@ -41,11 +40,8 @@ Install [Claude Code](https://code.claude.com/docs/en/overview) as the admin use
 
 ```sh
 # SSH: keys only, no root
-sudo tee /etc/ssh/sshd_config.d/10-harden.conf <<'EOF'
-PasswordAuthentication no
-KbdInteractiveAuthentication no
-PermitRootLogin no
-EOF
+printf '%s\n' 'PasswordAuthentication no' 'KbdInteractiveAuthentication no' 'PermitRootLogin no' |
+  sudo tee /etc/ssh/sshd_config.d/10-harden.conf
 sudo systemctl reload ssh
 
 # Firewall: nothing in, except SSH over the tailnet
@@ -59,36 +55,40 @@ sudo apt install -y unattended-upgrades
 sudo dpkg-reconfigure -f noninteractive unattended-upgrades
 ```
 
-Docker publishes ports around ufw. So a stack binds each port it publishes to `127.0.0.1`, or to the server's tailnet address, never to `0.0.0.0`.
+Docker and Kubernetes publish ports around ufw. So nothing publishes a port to `0.0.0.0`. Services are reached through Tailscale's operator instead.
 
-## 5. Install Docker
-
-Install Docker Engine and the Compose plugin from [Docker's own apt repository](https://docs.docker.com/engine/install/ubuntu/), not Ubuntu's `docker.io`. Then cap the logs, so a noisy container can't fill the disk:
+## 5. Install k3s and Argo CD
 
 ```sh
-sudo tee /etc/docker/daemon.json <<'EOF'
-{ "log-driver": "local", "log-opts": { "max-size": "20m", "max-file": "5" }, "live-restore": true }
-EOF
-sudo systemctl restart docker
-sudo usermod -aG docker "$USER"
+# k3s, without its own ingress: services are reached through Tailscale's operator
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik --write-kubeconfig-mode 600" sh -
+mkdir -p ~/.kube && sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config && sudo chown "$USER" ~/.kube/config
+
+# Argo CD, at the version pinned in endstate-gitops
+kubectl create namespace argocd
+kubectl apply -n argocd -f "https://raw.githubusercontent.com/argoproj/argo-cd/<version>/manifests/install.yaml"
 ```
 
-Also install `cosign` from [its releases](https://github.com/sigstore/cosign/releases), to check signed bundles.
+Then point Argo CD at `endstate-gitops`, once. Its `bootstrap/` folder holds one app that installs every other app: the Image Updater, the sops plugin, Tailscale's operator, Velero, and each service. From here on, a change to the server is a pull request to that repository.
 
-## 6. Lay out the stacks
+The server's age key goes in as a Kubernetes secret, so Argo CD can decrypt the secrets files. It never goes into Git.
 
-Each stack gets its own folder under `/opt/stacks/<name>`, its own Compose project and its own `.env`, readable only by its owner (`chmod 600`). A stack's secrets live in that `.env` and in the fleet repository's encrypted file, never in Git as plain text.
+## 6. Install Docker, for AUGUR
 
-| Folder | What it runs | How it deploys |
-| --- | --- | --- |
-| `/opt/stacks/augur` | AUGUR, the workbench | [Deploy AUGUR to the workbench](../deploy-augur-to-the-workbench/) |
-| `/opt/stacks/<tool>` | One of Harry's tools, such as DevLake | Its own pinned Compose file |
+AUGUR runs on Compose beside the cluster (see [How deploys work](../../explanation/how-deploys-work/)). Install Docker Engine and the Compose plugin from [Docker's own apt repository](https://docs.docker.com/engine/install/ubuntu/), not Ubuntu's `docker.io`. In `/etc/docker/daemon.json`, cap the logs so a noisy container can't fill the disk:
 
-Give each stack a memory limit, so one stack can't starve the others.
+```json
+{ "log-driver": "local", "log-opts": { "max-size": "20m", "max-file": "5" }, "live-restore": true }
+```
+
+Make a `deploy` user for AUGUR's deploy job. It's in the `docker` group and owns `/opt/stacks/augur`. Its SSH key may run only the deploy command (`command=` in `authorized_keys`).
+
+Install `cosign` and `sops` from their releases, for the deploy command.
 
 ## Check it worked
 
 - `ssh` with a password is refused, and `sudo ufw status` shows only port 22 on `tailscale0`.
+- `kubectl get nodes` shows the server `Ready`.
+- Argo CD's page lists every app `Synced` and `Healthy`.
 - `docker compose version` prints a version.
-- `cosign version` prints a version.
 - The Remote Control session answers from `/opt/stacks`.
