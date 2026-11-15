@@ -5,11 +5,14 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightLlmsTxt from 'starlight-llms-txt';
+import mermaid from 'astro-mermaid';
 
 export default defineConfig({
   site: process.env.DOCS_SITE_URL || 'http://localhost:4321',
   base: process.env.DOCS_BASE || '/',
   integrations: [
+    // Draws ```mermaid blocks as diagrams in the browser. It must come before Starlight.
+    mermaid({ autoTheme: true }),
     starlight({
       title: 'Handbook',
       description: 'How Harry builds, ships and runs his projects.',
