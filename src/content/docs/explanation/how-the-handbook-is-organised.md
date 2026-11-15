@@ -29,6 +29,6 @@ The handbook is written the way code is, as [Write the Docs](https://www.writeth
 - CI checks the writing, the Markdown and every link;
 - the site is published from `main`.
 
-## The same tools as AUGUR
+## One docs tool
 
-The handbook uses [Starlight](https://starlight.astro.build/), like AUGUR's docs site, so there is one docs tool to know. It also publishes an `llms.txt`, so an agent can load the whole process in one fetch.
+The handbook uses [Starlight](https://starlight.astro.build/), so there is one docs tool to know. It also publishes an `llms.txt`, so an agent can load the whole process in one fetch.

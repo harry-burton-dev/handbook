@@ -16,9 +16,9 @@ This is the path for any repository with a `REVIEW.md` and `.github/review-tiers
 
    | Tier | Paths | Needs before merge |
    | --- | --- | --- |
-   | Low | shipped docs, copy, stories, tests, changesets, Renovate bumps | green CI |
+   | Low | shipped docs, copy, stories, tests, changesets, dependency bumps | green CI |
    | Medium | ordinary product code | green CI and a fresh review |
-   | High | the updater, identity, permissions, gateway, events, registry, storage, service kit, migrations, SDK contract, infra, release, workflows | the review, under 400 lines, the deploy test where a server runs it |
+   | High | sign-in and permissions, data migrations, storage, public API contracts, infrastructure, release and workflow files | the review, under 400 lines, and a deploy check where a server runs it |
 
    When unsure, go up a tier. The Review check works the tier out from `.github/review-tiers.json`.
 

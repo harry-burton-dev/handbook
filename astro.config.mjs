@@ -1,5 +1,5 @@
-// The handbook: how Harry builds, ships and runs his projects, for every project, not only AUGUR.
-// Built with Starlight, the same as AUGUR's docs site (ADR 0082). Where it's published comes from the
+// The handbook: how Harry builds, ships and runs his projects, for every project.
+// Built with Starlight. Where it's published comes from the
 // build's environment, never from here: DOCS_SITE_URL is the site's origin and DOCS_BASE the path it's
 // served under (`/` unless set).
 import { defineConfig } from 'astro/config';

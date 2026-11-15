@@ -7,17 +7,18 @@ match: $sentence
 indicators:
   - ':'
 exceptions:
-  - AUGUR
   - ADR
   - ADRs
   - CI
   - DevLake
+  - Changesets
   - DORA
   - GitHub
   - Grafana
   - Linear
   - MSI
   - OpenFeature
+  - Release Please
   - Starlight
   - Vale
   - Claude

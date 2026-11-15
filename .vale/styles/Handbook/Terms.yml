@@ -4,7 +4,6 @@ message: "Write '%s', not '%s'."
 level: error
 ignorecase: false
 swap:
-  Augur: AUGUR
   Devlake: DevLake
   Github: GitHub
   Open Feature: OpenFeature

@@ -7,8 +7,6 @@ sidebar:
 
 Every project uses the same flag standard: the OpenFeature API, flags in a flagd file kept in the repository, and no central flag server. [Feature flags](../../reference/feature-flags/) has the details and [Why flags have no server](../../explanation/why-flags-have-no-server/) the reasons.
 
-AUGUR is different: an app declares a **feature preview** in its manifest, and Admin turns it on. Use that in AUGUR apps, not this guide.
-
 ## Steps
 
 1. **Add the OpenFeature SDK** for the project's language, and the flagd provider. Where the project can't run a flagd container, use the provider's in-process file mode.

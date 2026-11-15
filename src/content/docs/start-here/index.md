@@ -5,7 +5,7 @@ sidebar:
   order: 1
 ---
 
-The handbook says how Harry's projects are built, shipped and run. It covers every project, not only AUGUR. Agents follow it, and so does Harry.
+The handbook says how Harry's projects are built, shipped and run. It covers every project. Agents follow it, and so does Harry.
 
 ## What's in it
 
@@ -18,15 +18,17 @@ The handbook says how Harry's projects are built, shipped and run. It covers eve
 ## What isn't in it
 
 - **Decisions.** How Harry works is agreed in working agreements (WA records) in Drive's "Ways of working". Pages link to the WA behind them. See [Working agreements](../reference/working-agreements/).
-- **A product's own docs and decisions.** AUGUR's are its docs site and its ADRs. Other projects keep theirs with the project.
-- **Tracking.** Work is tracked in Linear, team PER.
+- **A product's own docs and decisions.** Each product keeps its docs and decisions with the product.
+- **Tracking.** Work is tracked in Linear.
 
 ## Where to start
 
 1. [How work flows](../explanation/how-work-flows/): from Harry's ask to a merged change.
 2. [Start an epic or an issue](../how-to/start-an-epic-or-issue/): what to do at the start of any thread.
 3. [Ship a change](../how-to/ship-a-change/): branch, review tier, merge.
-4. [Repositories](../reference/repositories/): what each one is.
+4. [Repositories](../reference/repositories/): how each one is set up.
+5. [Pipelines](../reference/pipelines/): what runs on each change.
+6. [Tech stack](../reference/tech-stack/): the tools, and what each is for.
 
 ## How it's kept up to date
 

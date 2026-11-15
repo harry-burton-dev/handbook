@@ -1,36 +1,25 @@
 ---
 title: Repositories
-description: Harry's repositories, what each is, and how it releases.
+description: How Harry's repositories are set up on GitHub, and which files each one has.
 ---
 
-All on GitHub under `harry-burton-dev`. The AUGUR repositories and the handbook are public, so their Actions minutes are free.
+Repositories live on GitHub under `harry-burton-dev`. Each one has the same setup, so the same checks and the same process apply to all of them.
 
-## AUGUR
+Public repositories don't use paid GitHub Actions minutes. Private repositories do.
 
-| Repository | What it is | Releases as |
-| --- | --- | --- |
-| `augur` | The platform: shell, SDK, services, packaging, deploy test, release feed | `augur@X.Y.Z`, plus `@augur/*` packages |
-| `augur-kit` | The React kit and Storybook | `kit@X.Y.Z` (0.x: features ship as patches) |
-| `augur-app-template` | Starter, the app template; the deploy test installs it | never (use an empty changeset) |
-| `augur-folio` | Artifacts app | `app/<id>@X.Y.Z` |
-| `augur-atlas` | Data Atlas app | `app/<id>@X.Y.Z` |
-| `augur-auspex` | Explorer app | `app/<id>@X.Y.Z` |
-| `augur-mandate` | Mandate app | `app/<id>@X.Y.Z` |
-| `augur-run` | Scripted synthetic use of a deployment | doesn't release |
-| `backstage-hb` | Backstage portal | image build only |
+## Files every repository has
 
-AUGUR is trunk-based: `main` is the only long-lived branch. Releases are built and signed once with cosign, as GitHub pre-releases on beta.
+| File | What it's for |
+| --- | --- |
+| `AGENTS.md` | The checks to run, and the repository's own rules |
+| `REVIEW.md` and `.github/review-tiers.json` | The review tier of each kind of change, for a repository that ships code |
+| `.github/workflows/` | CI, the docs check and the pull request title check. See [Pipelines](../pipelines/). |
+| `release-please-config.json` and `.release-please-manifest.json` | Versioning, for a repository that releases with Release Please |
+| `flags.json` and `docs/flags.md` | Feature flags, for a repository that has any. See [Feature flags](../feature-flags/). |
 
-## Other projects
+## Release styles
 
-Outside AUGUR, repositories release with Release Please ([Set up releases](../../how-to/set-up-releases/)).
+A repository releases in one of two styles. Both tag `<name>@X.Y.Z`, so the [control centre](../control-centre/) reads every repository the same way.
 
-| Repository | What it is | Notes |
-| --- | --- | --- |
-| `handbook` | This handbook | Starlight; releases as `handbook@X.Y.Z` |
-| `gen-ui` | A canvas web app (`apps/web`) | can reach a server |
-| `muster` | Power Platform solution | locked-down tenant: no API access or custom code |
-| `rn-design` | HTML pages | opened from `file://` on locked-down machines |
-| `Org`, `org-chart` | not described yet | |
-
-Projects tracked in Linear without a repository here include Endstate, Biography Pack-up Builder and Apollo.
+- **Release Please** is the default. Use it for a repository that holds one thing. See [Set up releases](../../how-to/set-up-releases/).
+- **Changesets** is for a pnpm monorepo that releases several units from one repository. See [Why releases use Release Please](../../explanation/why-releases-use-release-please/) for the comparison.
