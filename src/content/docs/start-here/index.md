@@ -29,7 +29,7 @@ The handbook says how Harry's projects are built, shipped and run. It covers eve
 4. [Repositories](../reference/repositories/): how each one is set up.
 5. [Pipelines](../reference/pipelines/): what runs on each change.
 6. [Tech stack](../reference/tech-stack/): the tools, and what each is for.
-7. [How deploys work](../explanation/how-deploys-work/): how a change gets onto a server, and how it's undone.
+7. [Deploying a dev workbench](../explanation/deploying-a-dev-workbench/): the standard way to put the dev branch on a server.
 
 ## How it's kept up to date
 

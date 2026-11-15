@@ -25,21 +25,13 @@ Each tool has one job here. The links go to each tool's own site. A tool that ru
 | GitHub Actions | Runs CI, the docs check and releases | [GitHub Actions](https://docs.github.com/actions) |
 | Release Please | Turns merged titles into versions and changelogs | [Release Please](https://github.com/googleapis/release-please) |
 | Changesets | Versions and changelogs for a pnpm monorepo | [Changesets](https://github.com/changesets/changesets) |
+| Coolify | Builds Dockerfiles and runs the containers on Harry's server | [Coolify](https://coolify.io/) |
 | nginx | Serves static sites from a container | [nginx](https://nginx.org/) |
-| cosign | Signs releases in CI, and checks the signature before a server runs one | [cosign](https://docs.sigstore.dev/cosign/) |
-| Argo CD | Makes the server match `endstate-gitops`, and shows what runs and what drifted | [Argo CD](https://argo-cd.readthedocs.io/) |
-| Argo CD Image Updater | Writes each new image digest from `main` back to Git, so the dev environment follows it | [Argo CD Image Updater](https://argocd-image-updater.readthedocs.io/) |
-| Helm | Packages each service on the cluster as one versioned chart | [Helm](https://helm.sh/) |
 
 ## Run and observe
 
 | Tool | What it does here | Read more |
 | --- | --- | --- |
-| Ubuntu Server LTS | The system on Harry's server. See [Set up a server](../../how-to/set-up-a-server/). | [Ubuntu Server](https://ubuntu.com/server) |
-| k3s | Runs Kubernetes on Harry's server, for every service except AUGUR | [k3s](https://k3s.io/) |
-| Docker and Compose | Run AUGUR on the server, beside the cluster | [Docker](https://docs.docker.com/engine/) |
-| Velero | Backs up the cluster to a bucket off the server | [Velero](https://velero.io/) |
-| restic | Copies AUGUR's backups off the server, encrypted | [restic](https://restic.net/) |
 | Tailscale | Gives a private network (the tailnet) to reach the server without opening ports | [Tailscale](https://tailscale.com/) |
 | Homarr | Harry's home page for his services | [Homarr](https://homarr.dev/) |
 | Apache DevLake | Collects delivery data from GitHub and shows the DORA metrics. See the [control centre](../control-centre/). | [Apache DevLake](https://devlake.apache.org/) |
@@ -47,7 +39,6 @@ Each tool has one job here. The links go to each tool's own site. A tool that ru
 | Prometheus | Collects metrics from services | [Prometheus](https://prometheus.io/) |
 | Langfuse | Records and evaluates calls to language models | [Langfuse](https://langfuse.com/) |
 | Infisical | Keeps secrets out of code | [Infisical](https://infisical.com/) |
-| sops and age | Encrypt each environment's secrets in `endstate-gitops`, so only Harry and that server can read them | [sops](https://getsops.io/), [age](https://age-encryption.org/) |
 
 ## Plan and build with agents
 

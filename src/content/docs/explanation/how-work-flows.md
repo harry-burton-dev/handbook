@@ -15,7 +15,7 @@ Harry works alone, with Claude threads doing most of the building. The process i
 4. **The review tier decides what else is needed** (WA-007). Medium and High get a fresh `/code-review high`. A change that runs on a server gets the deploy test. Harry's short list of paths needs his ok.
 5. **The thread merges its own pull request** once CI and the Review check are green (WA-003).
 6. **Releases** follow the repository's release style, see [Pipelines](../../reference/pipelines/). Promoting a release is Harry's step.
-7. **Servers pull what they run.** The workbench takes each dev build of `main` by itself, and other servers take releases on their ring. See [How deploys work](../how-deploys-work/). A thread works on a server only through a Remote Control session Harry started, and never assumes a step there worked.
+7. **Servers** are upgraded by Harry. A thread can't see his servers, so it never assumes a step there worked.
 
 ## What only Harry does
 
