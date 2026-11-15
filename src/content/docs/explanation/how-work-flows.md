@@ -14,13 +14,13 @@ Harry works alone, with Claude threads doing most of the building. The process i
 3. **The thread makes the change** on a branch, runs the repository's checks, and opens a draft pull request.
 4. **The review tier decides what else is needed** (WA-007). Medium and High get a fresh `/code-review high`. A change that runs on a server gets the deploy test. Harry's short list of paths needs his ok.
 5. **The thread merges its own pull request** once CI and the Review check are green (WA-003).
-6. **Releases** are built and signed once, as a beta. Making one stable is Harry's step.
+6. **Releases** follow the repository's release style, see [Pipelines](../../reference/pipelines/). Promoting a release is Harry's step.
 7. **Servers** are upgraded by Harry. A thread can't see his servers, so it never assumes a step there worked.
 
 ## What only Harry does
 
 - Answers the three questions on his paths: what isn't tested, how to undo it, and which release path it takes.
-- Merges into production, and makes a release stable.
+- Merges into production, and promotes releases.
 - Changes repository settings, secrets and billing.
 - Accepts working agreements.
 - Anything on his servers, unless he starts a Remote Control session for it.

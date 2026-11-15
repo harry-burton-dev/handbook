@@ -11,7 +11,7 @@ Working agreements live in the Drive folder **Ways of working**, listed in its *
 | WA-002 | Linear is where work is tracked | [Start an epic or an issue](../../how-to/start-an-epic-or-issue/) |
 | WA-003 | Claude merges its own pull requests when checks pass | [Ship a change](../../how-to/ship-a-change/) |
 | WA-004 | Decisions are recorded, and changing one is never silent | this page |
-| WA-005 | How the alpha build is orchestrated (AUGUR) | |
+| WA-005 | How the alpha build is orchestrated | |
 | WA-006 | Record decisions | |
 | WA-007 | Review tiers for solo development | [Ship a change](../../how-to/ship-a-change/) |
 

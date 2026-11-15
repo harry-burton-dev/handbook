@@ -1,11 +1,11 @@
 ---
 title: Set up releases in a repository
-description: Add Release Please to a repository outside AUGUR, so merged pull requests become versioned releases.
+description: Add Release Please to a repository, so merged pull requests become versioned releases.
 sidebar:
   order: 4
 ---
 
-Every repository outside AUGUR releases with Release Please. AUGUR keeps Changesets. [Why releases use Release Please](../../explanation/why-releases-use-release-please/) gives the reasons. The handbook is the first repository set up this way, so copy its files.
+Use Release Please for a repository that releases with versions. A monorepo with several units keeps Changesets. [Why releases use Release Please](../../explanation/why-releases-use-release-please/) gives the reasons. The handbook is the first repository set up this way, so copy its files.
 
 ## How it works
 

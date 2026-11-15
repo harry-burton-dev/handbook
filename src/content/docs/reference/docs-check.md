@@ -23,7 +23,7 @@ Tools are pinned by version and checksum, and actions by commit.
 | `working-directory` | `.` | Where the site's `package.json` is. |
 | `links` | `**/*.md` | What lychee checks: a site's built HTML (`dist`) or the Markdown. |
 
-The runner is `ubuntu-latest` unless the calling repository sets the variable `CI_RUNNER`, as JSON (for example `"self-hosted"`), the same as AUGUR.
+The runner is `ubuntu-latest` unless the calling repository sets the variable `CI_RUNNER`, as JSON (for example `"self-hosted"`).
 
 ## Vale rules
 
@@ -31,7 +31,7 @@ The Handbook style is in `.vale/styles/Handbook/`.
 
 | Rule | Level | Looks for |
 | --- | --- | --- |
-| Terms | error | names written the wrong way, such as `Augur` for AUGUR |
+| Terms | error | names written the wrong way, such as `Github` for GitHub |
 | PlainWords | warning | long words with a short one, such as `utilise` for `use` |
 | Vague | warning | `etc.` and `various` in place of the actual things |
 | SentenceLength | warning | sentences over 30 words |

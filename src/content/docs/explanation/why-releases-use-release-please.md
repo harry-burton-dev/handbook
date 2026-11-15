@@ -1,6 +1,6 @@
 ---
 title: Why releases use Release Please
-description: Why repositories outside AUGUR use Release Please, AUGUR keeps Changesets, and none use semantic-release.
+description: Why most repositories use Release Please, monorepos keep Changesets, and none use semantic-release.
 sidebar:
   order: 3
 ---
@@ -15,13 +15,13 @@ Three tools turn merged work into versioned releases on GitHub. They differ in w
 | Monorepos | built in, made for pnpm | built in, one entry per unit | only through community plugins |
 | Languages | JavaScript first | many | Node first |
 
-## AUGUR keeps Changesets
+## Monorepos keep Changesets
 
-AUGUR is a pnpm monorepo with several units (`augur@`, `kit@`, `app/<id>@`) and `-dev.N` builds. Changesets was made for that. Agents already add a changeset to each pull request, so each release note is written on purpose. Moving would cost a migration and fix nothing that is broken.
+A pnpm monorepo with several units, each with its own version, suits Changesets. It was made for that. Agents add a changeset to each pull request, so each release note is written on purpose. A repository that already uses Changesets keeps it, because moving would cost a migration and fix nothing that is broken.
 
-## Other repositories use Release Please
+## Most repositories use Release Please
 
-Most other repositories hold one thing and release rarely. Release Please needs no file in each pull request: it reads the titles. It works in any language, and it is one GitHub Action. Its release pull request keeps a step before anything ships. It writes tags in AUGUR's `<name>@X.Y.Z` form, so the control centre reads every repository with one pattern.
+Most repositories hold one thing and release rarely. Release Please needs no file in each pull request: it reads the titles. It works in any language, and it is one GitHub Action. Its release pull request keeps a step before anything ships. It writes tags in the `<name>@X.Y.Z` form, so the control centre reads every repository with one pattern.
 
 ## No repository uses semantic-release
 

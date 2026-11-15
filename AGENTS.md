@@ -1,6 +1,6 @@
 # Handbook
 
-How Harry builds, ships and runs his projects, for every project. A Starlight site, like AUGUR's docs (ADR 0082).
+How Harry builds, ships and runs his projects, for every project. A Starlight site.
 
 ## Where things go
 
@@ -11,7 +11,7 @@ How Harry builds, ships and runs his projects, for every project. A Starlight si
 ## Writing
 
 - Plain English: short sentences, the short word, headings in sentence case.
-- Names one way: AUGUR, DevLake, OpenFeature, flagd, linear-link, GitHub. Vale's Terms rule enforces them.
+- Names one way: DevLake, OpenFeature, flagd, linear-link, GitHub. Vale's Terms rule enforces them.
 - No server addresses, secrets or links to private chats in pages.
 
 ## Checking a change
