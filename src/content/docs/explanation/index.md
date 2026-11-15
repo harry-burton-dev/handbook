@@ -9,3 +9,4 @@ Explanation pages say why. They don't give steps.
 
 - [How the handbook is organised](how-the-handbook-is-organised/)
 - [Why releases use Release Please](why-releases-use-release-please/)
+- [How a local Claude gets its secrets](how-a-local-claude-gets-its-secrets/)

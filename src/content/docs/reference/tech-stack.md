@@ -16,6 +16,7 @@ Each tool has one job here. The links go to each tool's own site. A tool that ru
 | Vale | Checks the prose: plain English, and the same names everywhere | [Vale](https://vale.sh/) |
 | markdownlint-cli2 | Checks Markdown layout | [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) |
 | lychee | Checks every link in a built site | [lychee](https://lychee.cli.rs/) |
+| Mermaid | Draws diagrams written in a page's Markdown | [Mermaid](https://mermaid.js.org/) |
 
 ## Ship and release
 
@@ -38,7 +39,8 @@ Each tool has one job here. The links go to each tool's own site. A tool that ru
 | Grafana | Shows dashboards, including DevLake's | [Grafana](https://grafana.com/) |
 | Prometheus | Collects metrics from services | [Prometheus](https://prometheus.io/) |
 | Langfuse | Records and evaluates calls to language models | [Langfuse](https://langfuse.com/) |
-| Infisical | Keeps secrets out of code | [Infisical](https://infisical.com/) |
+| Infisical | Keeps secrets out of code, and gives each computer's Claude its tokens. See [How a local Claude gets its secrets](../../explanation/how-a-local-claude-gets-its-secrets/). | [Infisical](https://infisical.com/) |
+| Windows DPAPI | Encrypts the one Infisical credential on a Windows computer, tied to the user's login | [DPAPI](https://learn.microsoft.com/en-us/dotnet/standard/security/how-to-use-data-protection) |
 
 ## Plan and build with agents
 
@@ -47,6 +49,7 @@ Each tool has one job here. The links go to each tool's own site. A tool that ru
 | Linear | Tracks work as epics and issues | [Linear](https://linear.app/) |
 | linear-link | Files each thread's work under a Linear epic and issue. See [linear-link](../linear-link/). | [Claude Code](https://claude.com/claude-code) |
 | Claude Code | Does most of the building, in threads | [Claude Code](https://claude.com/claude-code) |
+| Claude Desktop and MCP | Claude on Harry's computers, reaching his services through MCP servers | [Claude Desktop](https://claude.ai/download), [MCP](https://modelcontextprotocol.io/) |
 | Google Drive | Holds the working agreements | not linked |
 
 ## Feature flags

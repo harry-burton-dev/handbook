@@ -15,3 +15,4 @@ Each guide gives the steps for one job, in order, and ends when the job is done.
 - [Set up releases in a repository](set-up-releases/)
 - [Write a page](write-a-page/)
 - [Add the docs check to a repository](add-the-docs-check/)
+- [Give a computer its Claude secrets](give-a-computer-claude-secrets/)
